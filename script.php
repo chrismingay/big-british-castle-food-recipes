@@ -65,12 +65,12 @@ CREATE TABLE IF NOT EXISTS `recipe_step` (
 		public $steps = array();
 	}
 
-	$totalAllowedChecks = 1;
+	$totalAllowedChecks = 1;	// How many pages can be checked per running of the script
 	$checksSoFar = 0;
 
 	libxml_use_internal_errors(true);
 
-	$baseUrl = 'http://www.definitelynotbbc.co.uk';
+	$baseUrl = 'http://www.definitelynotbbc.co.uk';	// The base URL of the scrape... this is definitely not a real URL
 
 	$checkString = "/food/recipes/";
 	$checkLength = strlen($checkString);
@@ -84,10 +84,12 @@ CREATE TABLE IF NOT EXISTS `recipe_step` (
 		$pendingUrls[] = stripslashes($row['url']);
 	}
 
+	/*
+	To start the pending_url table is empty, so no scraping will start
+	you might want to add an example one, e.g...
 
-	/*$pendingUrls = array(
-		'/food/recipes/hearty_vegetable_soup_14365'
-	);*/
+		/food/recipes/hearty_vegetable_soup_14365
+	*/
 
 	$checkedUrls = array();
 
@@ -167,6 +169,8 @@ CREATE TABLE IF NOT EXISTS `recipe_step` (
 					$recipe->imageUrl = $tag->getAttribute('src');
 				}
 			}
+
+			// If we found an image URL, we download it and store as a base64 string
 			if($recipe->imageUrl != "")
 			{
 				$recipe->imageData = base64_encode(file_get_contents($recipe->imageUrl));
@@ -205,7 +209,7 @@ CREATE TABLE IF NOT EXISTS `recipe_step` (
 			}
 
 			// Dietry
-			// TODO
+			// TODO - Not sure of all of the options here, but one example is Vegetarian.
 
 			// Recipe Ingredients
 			$classname="recipe-ingredients__list-item";
